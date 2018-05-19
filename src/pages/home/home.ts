@@ -26,6 +26,8 @@ export class HomePage {
   threshold = 50;
   processor: ImageProcessor;
 
+  readonly defaultFilenamePrefix = 'glassCamera_original_';
+
   constructor(
     public navCtrl: NavController,
     private camera: Camera,
@@ -63,6 +65,8 @@ export class HomePage {
             console.log('Received image data');
             this.lastPictureTime = new Date().toString();
             this.base64Image = 'data:image/jpeg;base64,' + imageData;
+            this.save(this.base64Image, this.defaultFilenamePrefix);
+
             this.processor = new ImageProcessor(this.base64Image);
             this.updateImage();
           },
@@ -82,29 +86,35 @@ export class HomePage {
   updateImage() {
     this.info('Updating image');
 
-    let red = this.processor.mask(this.current, this.threshold).then(base64 => {
+    this.processor.mask(this.current, this.threshold).then(base64 => {
       this.base64Image = base64;
     });
   }
 
-  save() {
+  saveUpdated() {
     if (this.processor) {
       const filenamePrefix =
         'glassCamera_' + this.current.toHex() + '_T' + this.threshold + '_';
-
-      this.base64ToGallery
-        .base64ToGallery(this.base64Image, {
-          mediaScanner: true,
-          prefix: filenamePrefix
-        })
-        .then(
-          res => {
-            this.info('Image saved to the gallery');
-            console.log('Saved image to gallery ', res);
-          },
-          err => console.log('Error saving image to gallery ', err)
-        );
+      this.save(this.base64Image, filenamePrefix);
     }
+  }
+
+  save(base64: string, filenamePrefix: string) {
+    this.base64ToGallery
+      .base64ToGallery(base64, {
+        mediaScanner: true,
+        prefix: filenamePrefix
+      })
+      .then(
+        res => {
+          this.info('Image saved to the gallery');
+          console.log('Saved image to gallery ', res);
+        },
+        err => {
+          this.info('Error saving image to gallery');
+          console.log('Error saving image to gallery ', err);
+        }
+      );
   }
 
   thesholdChanged() {
