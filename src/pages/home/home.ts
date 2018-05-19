@@ -34,7 +34,7 @@ export class HomePage {
   ) {}
 
   onColorChange(color) {
-    console.log('oncolor change', color);
+    console.log('onColorChange', color);
     this.current = color;
     if (this.processor) {
       this.updateImage();
@@ -53,38 +53,34 @@ export class HomePage {
   };
 
   takePicture() {
-    console.log('took picture');
+    console.log('Took picture');
 
     try {
       this.camera
         .getPicture(this.options)
         .then(
           imageData => {
-            console.log('received image data');
+            console.log('Received image data');
             this.lastPictureTime = new Date().toString();
             this.base64Image = 'data:image/jpeg;base64,' + imageData;
             this.processor = new ImageProcessor(this.base64Image);
             this.updateImage();
           },
           err => {
-            console.log('error taking picture', err);
+            console.log('Error taking picture', err);
           }
         )
         .then()
         .catch(err => {
-          console.log('on catch', err);
+          console.log('error on catch', err);
         });
     } catch (e) {
-      console.log('error (1)', e);
+      console.log('error', e);
     }
   }
 
   updateImage() {
-    this.toast.create({
-      message: 'Updating image',
-      duration: 3000,
-      position: 'top'
-    }).present();
+    this.info('Updating image');
 
     let red = this.processor.mask(this.current, this.threshold).then(base64 => {
       this.base64Image = base64;
@@ -92,23 +88,22 @@ export class HomePage {
   }
 
   save() {
-    if( this.processor ){
+    if (this.processor) {
       const filenamePrefix =
-      'glassCamera_' + this.current.toHex() + '_T' + this.threshold + '_';
+        'glassCamera_' + this.current.toHex() + '_T' + this.threshold + '_';
 
-    this.base64ToGallery
-      .base64ToGallery(this.base64Image, { mediaScanner: true, prefix: filenamePrefix })
-      .then(
-        res =>  {
-          this.toast.create({
-            message: 'Image saved to gallery',
-            duration: 3000,
-            position: 'top'
-          }).present();
-          console.log('Saved image to gallery ', res)}
-          ,
-        err => console.log('Error saving image to gallery ', err)
-      );
+      this.base64ToGallery
+        .base64ToGallery(this.base64Image, {
+          mediaScanner: true,
+          prefix: filenamePrefix
+        })
+        .then(
+          res => {
+            this.info('Image saved to the gallery');
+            console.log('Saved image to gallery ', res);
+          },
+          err => console.log('Error saving image to gallery ', err)
+        );
     }
   }
 
@@ -116,5 +111,15 @@ export class HomePage {
     if (this.processor) {
       this.updateImage();
     }
+  }
+
+  info(message: string) {
+    this.toast
+      .create({
+        message: message,
+        duration: 1000,
+        position: 'top'
+      })
+      .present();
   }
 }
