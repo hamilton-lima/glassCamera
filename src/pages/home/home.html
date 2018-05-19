@@ -1,7 +1,7 @@
 <ion-content padding>
 
   <ion-item>
-    <ion-range [(ngModel)]="threshold" (ionChange)="thesholdChanged()" min="1" max="255">
+    <ion-range [(ngModel)]="threshold" (ionChange)="thesholdChanged()" min="1" max="255" debounce="500">
       <ion-icon range-left small name="sunny"></ion-icon>
       <ion-icon range-right name="sunny"></ion-icon>
     </ion-range>
