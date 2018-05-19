@@ -13,3 +13,16 @@ Use the command:
 ```
 ionic cordova run ios --livereload --consolelogs --debug
 ```
+
+# Results
+
+There are no optimizations in the current image processing, only distance between colors are calculated.
+
+Original
+(images/original.jpg)
+
+Red filter
+(images/mask_red.png)
+
+Blue filter 
+(images/mask_blue.png)
